@@ -1,0 +1,438 @@
+<!DOCTYPE html><html class="dark" lang="en" style="width: 1031px; height: 3661px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Lucidity | Intelligent Cloud Storage Optimization</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#b2f746",
+                        "on-tertiary-fixed-variant": "#005047",
+                        "on-tertiary-container": "#00665b",
+                        "on-secondary-fixed": "#111c2d",
+                        "secondary-fixed": "#d8e3fb",
+                        "outline": "#8c947c",
+                        "inverse-primary": "#446900",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#416400",
+                        "on-primary": "#213600",
+                        "on-secondary-container": "#aeb9d0",
+                        "on-surface": "#dae2fd",
+                        "on-primary-fixed-variant": "#334f00",
+                        "surface-bright": "#31394d",
+                        "surface-container-highest": "#2d3449",
+                        "on-tertiary": "#003731",
+                        "background": "#0b1326",
+                        "on-primary-fixed": "#121f00",
+                        "primary-fixed-dim": "#98da27",
+                        "error": "#ffb4ab",
+                        "secondary": "#bcc7de",
+                        "secondary-container": "#3e495d",
+                        "tertiary-fixed-dim": "#3cddc7",
+                        "surface-container-low": "#131b2e",
+                        "on-tertiary-fixed": "#00201c",
+                        "primary-container": "#a3e635",
+                        "on-secondary": "#263143",
+                        "tertiary-container": "#4de9d3",
+                        "inverse-on-surface": "#283044",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "outline-variant": "#424936",
+                        "primary": "#ccff80",
+                        "surface-container-lowest": "#060e20",
+                        "surface-dim": "#0b1326",
+                        "on-surface-variant": "#c2cab0",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-high": "#222a3d",
+                        "tertiary": "#a6ffef",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-variant": "#2d3449",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#62fae3",
+                        "surface-container": "#171f33",
+                        "on-background": "#dae2fd",
+                        "on-error": "#690005",
+                        "surface-tint": "#98da27",
+                        "surface": "#0b1326"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "section-padding": "120px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "section-header": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "section-header": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "display-xl": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .glass-card {
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-glow {
+            background: radial-gradient(circle at 50% 50%, rgba(163, 230, 53, 0.15) 0%, rgba(11, 19, 38, 0) 70%);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 0.2; transform: scale(1.05); }
+            50% { opacity: 0.35; transform: scale(1); }
+        }
+        .circuit-bg-animate {
+            animation: subtle-pulse 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-background/40 backdrop-blur-xl border-b border-white/10">
+<div class="flex justify-between items-center h-20 px-margin-mobile md:px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<img alt="Daddykart Logo" class="w-auto object-contain h-16" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnX43a7uPuzOFinguyw3YxtZvKE8XJCq2NLRsi1fRhML_BRaP0YF9iY88dE2f-bZe3BOXMq0miYEYgQd1VXRvEEhuuv4p1uklYX6MoLPqBZ23CAo7uIyMLimpmtiarBius0AUQ4aSOjjokejBrKFLj8kEAb7421mHE8AlB_wySoYpl-YiQ84MWuMCjEF2D3T-9S6b96KFGAWqPlHpc15-88gyRLnR4n6wHYe-r2ZMAbVw0lk0uQOklMN7yfyBU8vDwJmVxfCj-K9U">
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Platform</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md" href="#">Solutions</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md" href="#">Resources</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-on-surface hover:text-primary transition-colors font-body-md text-body-md">Sign In</button>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold hover:scale-95 transition-transform btn-glow flex items-center gap-2">
+                    Get Started
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+<!-- Circuit Animation Background -->
+<div class="absolute inset-0 -z-20 overflow-hidden pointer-events-none">
+<div class="absolute inset-0 bg-cover bg-center opacity-30 circuit-bg-animate mix-blend-screen" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuDQkoe0OUPUqyCCczk3B3hVt4zOFDMzCSt544vCURKwOxjvOrG-ec0HqURg47k0qt5rUZ00nmCQ2Q72b18IouRfjobjabscxF33Gr6BuTyzurfyk35OqVvhQB1h9ZpOd8tDaV4BC9wyB054TBtpwDN-SU7yhutvCLn85HfDgQkNOnCifQ7lp5ePeo-i9PkMpnmNRSZ-8WSc6daB0vWU9g4E8p02tDlWfkdCtdLOwXP6CgYhmUdhAF2G4a3d79qwaBN0zpW8wxLaeGY&quot;);"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-background via-background/40 to-background"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background"></div>
+</div>
+<div class="absolute inset-0 hero-glow -z-10"></div>
+<div class="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 blur-[120px] rounded-full -z-10"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-8">
+<div class="inline-flex items-center px-3 py-1 rounded-full border border-primary-container/30 bg-primary-container/10 text-primary-fixed font-label-mono text-label-mono uppercase tracking-wider">
+                        Next-Gen Cloud Storage
+                    </div>
+<h1 class="font-display-xl text-display-xl max-md:font-headline-lg-mobile max-md:text-headline-lg-mobile text-on-surface leading-tight">
+                        Intelligent, autonomous cloud storage optimization.
+                    </h1>
+<p class="text-on-surface-variant text-body-md max-w-xl">
+                        Stop overprovisioning. daddykart automatically right-sizes your block storage in real-time, reducing your cloud infrastructure spend by up to 50% without any downtime.
+                    </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-primary-container text-on-primary-container px-8 py-4 rounded-full font-bold btn-glow flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95">
+                            Run a Free Assessment
+                            <span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="border border-white/20 text-on-surface px-8 py-4 rounded-full font-bold hover:bg-white/5 transition-all flex items-center gap-2">
+                            Calculate Your Savings
+                            <span class="material-symbols-outlined">calculate</span>
+</button>
+</div>
+</div>
+<div class="relative group hidden lg:block">
+<div class="glass-card rounded-2xl p-8 aspect-square flex flex-col justify-between overflow-hidden relative">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label-mono text-label-mono text-primary uppercase">Storage Efficiency</span>
+<h3 class="font-section-header text-section-header text-on-surface">+84.2%</h3>
+</div>
+<div class="bg-primary/20 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary">speed</span>
+</div>
+</div>
+<!-- Abstract Visual Representative -->
+<div class="flex-1 flex items-center justify-center relative py-12">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent blur-2xl opacity-50"></div>
+<div class="w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
+<div class="w-4/5 h-3/4 border border-primary/20 rounded-xl relative flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+<div class="relative w-full h-full p-4 flex items-end gap-2">
+<div class="bg-primary/40 w-full h-1/3 rounded-t-md animate-pulse"></div>
+<div class="bg-primary/60 w-full h-1/2 rounded-t-md"></div>
+<div class="bg-primary w-full h-4/5 rounded-t-md"></div>
+<div class="bg-primary/30 w-full h-1/4 rounded-t-md"></div>
+<div class="bg-primary/50 w-full h-2/3 rounded-t-md"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high p-4 rounded-xl">
+<p class="text-on-surface-variant text-body-sm mb-1">Provisioned</p>
+<p class="font-bold text-on-surface">12.4 TB</p>
+</div>
+<div class="bg-primary-container/20 p-4 rounded-xl border border-primary-container/20">
+<p class="text-primary-fixed text-body-sm mb-1">Optimized</p>
+<p class="font-bold text-primary">3.1 TB</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Partner Marquee -->
+<section class="py-section-padding bg-surface-container-lowest overflow-hidden border-t border-white/5">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter mb-12 text-center">
+<h2 class="text-on-surface-variant font-label-mono text-label-mono uppercase tracking-widest" data-stitch-orig-opacity="0">Trusted by Global Leaders &amp; Premier Institutions</h2>
+</div>
+<div class="relative flex items-center overflow-hidden">
+<div class="animate-marquee gap-12 md:gap-24 items-center pr-12 md:pr-24"><img alt="Microsoft" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFG4z7pxWx8sFq_5dMuF10fc_rkpdgZTXX7tKGx_kiGbc6YE2Y4Q-CJDlUv7AInRQej-RH7DXv8o9lhOTnjSOb_laM0Szr2ahGh8jUfYBltUj6mwsgEWhU10gsgIZBS_k7AVqGuaQ36_rrEiarNRJgINDYYJzNvF9XOpyGTmQLhiZbGHzsMyuFJHwJPo5rkxJixLaZzlLHdw5NR8zNcFBuGfbVgNkrn16ZMHD7KxG93TuW2hYwA7u3yi6EYwjOVrmzxp1dwT7nyao"><img alt="IBM" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUsJnZinBj9pE0KbH3v-fnpFyDYeiYfOuBVHU9xCQRQHUfHseYI6fXaI-z0h91bqPBA7klZ_CHPYm_zqFkRZDpjnDUBYcyCLDd-t-aEhT_OzGeMyMQ88gTYRPQ_GhG_jlrZuLVx6tp-ovWHkP0zQ9o7wW907E6xuggjY2y_pYcbWXWJT-uWUpmQEwjbazjJFayxxHR8vGs-p0HO_EWomQYev7JM9oIbEEcBTK8l31TsbjouMO-Zm2Ug7AfV_b3Vpb-EZBo8VcUtM"><img alt="Apple" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbvqRb026Bz-70Z85h6mIt5pheaVJn111-3nRdmvJ1BoQZdDIV7BBTm0jQ60mVDyPG2aeYz3F_DSp52-AdQyQR2_PO6lVmySY0CUcYXbAezLu7xemJO2jZ80NjT1aFwqeZGnYqz9fodTTtOB-Buf3-CY_4EUcEAEmBr2V2CCjTu-MOjJcBVcUDofj9mDXDTi-e6Loo5DCfooUevi2ZqEKo8s9zI9PX37fWuEb57GoyESZtpuaYr2jJ1MpUZ54HW1h3rcH3BHGyktM"><img alt="Samsung" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf8uPa1iU0teiHpvsw4HQGGdnWPVb0JJ9O7w-2KbVmh9xLECTyb-jt7Hhbc2DE-KJkNhSACghSqCWZgkKEI03fJhJW6kIduOJ-OOR98lkAXywajAGYnVlMsSclRboDNkMkikQ-l4RRb7IcpSqLosAIechxqPxxEa98K436VCSEcMwdMT0ofX325BMPl_L10QzQ0zZ68npoceePnFogEqjYSKnjpiOB6ARWT7FEpSPcKxjjFizzA3sf7gmpIr5VnGc--47vBAAh8E8"><img alt="GoI" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjwPtFVDGQwmXAUSSB1eYRFPUPBqGYU630UKCXkozf9kG4_ZCfo-V2yb4MGJQWyudauZPU3-5FjIQi41pLIbU5ZcS68k2DeA9ltXhdo87zTSRaFV6vhFWgXzom4XibgoY-tt5OCWpyqrTk-AxAQDLr3QBDp1rxUJcwumftwsuWCboxdZog_rnmjN5wZ7OPP9IKG1ehcO4aCLB2FWFyR47R5bQepppTWAayiuIv7I_A3G65Ik4hBrOI8A1BkwBLD483c8OB7bLfP44"><img alt="MNNIT" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAbtFKeKUxS_9_NCZx03sfwPBntU2-spimScElz_1YiM_hgd2RH86T-4gF_yA_sAoQpi6qImsYie2XJu9cv9kuJBn0UJ_Ed72WwWVHU1s5Amr8sSVv379Clg5CyXEnAUX8QhPxKBFTSFKvsX3IjqhBzq4m6CrL75tyGnq2w9GqOip1DQpDvVCX5HKtGfcPqIvmJ7gLfHwWs5SNtblT_3FIRrOTlIGH_Jxi3Ft0Z8ewaaTT--9YUhjgD7DKMHhhxKSx-ORxXATaVlg"><img alt="IITR" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUdL7YVxnslB9Z1XVM0sJZhPHXAdTOLHfGu9dR5jrmJLMU0htBCDROLG9Fyyj80PCLiGaiZURO7nx60Oe1-Sykd6Fi1Uj0DUaoBQ76q3hsRkhDguvTDdqR86OMphKgyXLcQvvX56qx7-gMXJisdKE4ygeKGrHZo7y4EBsOme8LAHXiTguu7KIXoostndY1ylRDPjbnSNHpEo4aIwhsGmIDy8ey0PMI9sgJqrj6B6Z2tSgTTaRAU09ftBoa8EB9Nx7Vh2ZLyvrS184"><img alt="GLB" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnmBPsgpFjrHxuGPHuPyitQImZFLBwGYTpqRqm5jonVbOlLEhk_tyXKxV4CmY2uUjdEHVymdJpnDUFZSqKecwGFSnWO5J4qoqy8NWWN0K8Yn45PxoxR_bhF1Y9H0iNOiPV_4JHr8MeQi0e1-VlAZQC_qeeaKeexm-O3NgZInoQKvka2x2IF-9qw1GPMRXAIdVR0TRaG_UoUgQA82i48WmAJc4lRBv2J1c28qZ0l6E691DHVPgVFN07LZDd9SEHCt97V57Gm1DKul0"><img alt="IIT Delhi" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaFNDC2UDn1S8lYMRJP8qJ_wvVHV5C3NR2gvhYwhxsqIoc1qEC3h8jidRkkUmwZ0zP7O6T4YoXGHo3ovSIug3HKHthqS9YA4OdL_ClYQ6YDsZBra0ytXlJu-aN_GchmeCZVQHZE_uRkDIpyW1krilVvitWoTCdI9Uz3DiCxRxwjSJCu1ptUuS6pf0wX8B9wiV3J43q4cHPs_8JOpZR68MtJunRcDqcnp5f61SXNN0Ao4wTIA3O6uCfeCkE8eyBNnnTLUHDCbgTsoM"><img alt="Microsoft" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFG4z7pxWx8sFq_5dMuF10fc_rkpdgZTXX7tKGx_kiGbc6YE2Y4Q-CJDlUv7AInRQej-RH7DXv8o9lhOTnjSOb_laM0Szr2ahGh8jUfYBltUj6mwsgEWhU10gsgIZBS_k7AVqGuaQ36_rrEiarNRJgINDYYJzNvF9XOpyGTmQLhiZbGHzsMyuFJHwJPo5rkxJixLaZzlLHdw5NR8zNcFBuGfbVgNkrn16ZMHD7KxG93TuW2hYwA7u3yi6EYwjOVrmzxp1dwT7nyao"><img alt="IBM" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUsJnZinBj9pE0KbH3v-fnpFyDYeiYfOuBVHU9xCQRQHUfHseYI6fXaI-z0h91bqPBA7klZ_CHPYm_zqFkRZDpjnDUBYcyCLDd-t-aEhT_OzGeMyMQ88gTYRPQ_GhG_jlrZuLVx6tp-ovWHkP0zQ9o7wW907E6xuggjY2y_pYcbWXWJT-uWUpmQEwjbazjJFayxxHR8vGs-p0HO_EWomQYev7JM9oIbEEcBTK8l31TsbjouMO-Zm2Ug7AfV_b3Vpb-EZBo8VcUtM"><img alt="Apple" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbvqRb026Bz-70Z85h6mIt5pheaVJn111-3nRdmvJ1BoQZdDIV7BBTm0jQ60mVDyPG2aeYz3F_DSp52-AdQyQR2_PO6lVmySY0CUcYXbAezLu7xemJO2jZ80NjT1aFwqeZGnYqz9fodTTtOB-Buf3-CY_4EUcEAEmBr2V2CCjTu-MOjJcBVcUDofj9mDXDTi-e6Loo5DCfooUevi2ZqEKo8s9zI9PX37fWuEb57GoyESZtpuaYr2jJ1MpUZ54HW1h3rcH3BHGyktM"><img alt="Samsung" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf8uPa1iU0teiHpvsw4HQGGdnWPVb0JJ9O7w-2KbVmh9xLECTyb-jt7Hhbc2DE-KJkNhSACghSqCWZgkKEI03fJhJW6kIduOJ-OOR98lkAXywajAGYnVlMsSclRboDNkMkikQ-l4RRb7IcpSqLosAIechxqPxxEa98K436VCSEcMwdMT0ofX325BMPl_L10QzQ0zZ68npoceePnFogEqjYSKnjpiOB6ARWT7FEpSPcKxjjFizzA3sf7gmpIr5VnGc--47vBAAh8E8"><img alt="GoI" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjwPtFVDGQwmXAUSSB1eYRFPUPBqGYU630UKCXkozf9kG4_ZCfo-V2yb4MGJQWyudauZPU3-5FjIQi41pLIbU5ZcS68k2DeA9ltXhdo87zTSRaFV6vhFWgXzom4XibgoY-tt5OCWpyqrTk-AxAQDLr3QBDp1rxUJcwumftwsuWCboxdZog_rnmjN5wZ7OPP9IKG1ehcO4aCLB2FWFyR47R5bQepppTWAayiuIv7I_A3G65Ik4hBrOI8A1BkwBLD483c8OB7bLfP44"><img alt="MNNIT" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAbtFKeKUxS_9_NCZx03sfwPBntU2-spimScElz_1YiM_hgd2RH86T-4gF_yA_sAoQpi6qImsYie2XJu9cv9kuJBn0UJ_Ed72WwWVHU1s5Amr8sSVv379Clg5CyXEnAUX8QhPxKBFTSFKvsX3IjqhBzq4m6CrL75tyGnq2w9GqOip1DQpDvVCX5HKtGfcPqIvmJ7gLfHwWs5SNtblT_3FIRrOTlIGH_Jxi3Ft0Z8ewaaTT--9YUhjgD7DKMHhhxKSx-ORxXATaVlg"><img alt="IITR" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUdL7YVxnslB9Z1XVM0sJZhPHXAdTOLHfGu9dR5jrmJLMU0htBCDROLG9Fyyj80PCLiGaiZURO7nx60Oe1-Sykd6Fi1Uj0DUaoBQ76q3hsRkhDguvTDdqR86OMphKgyXLcQvvX56qx7-gMXJisdKE4ygeKGrHZo7y4EBsOme8LAHXiTguu7KIXoostndY1ylRDPjbnSNHpEo4aIwhsGmIDy8ey0PMI9sgJqrj6B6Z2tSgTTaRAU09ftBoa8EB9Nx7Vh2ZLyvrS184"><img alt="GLB" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnmBPsgpFjrHxuGPHuPyitQImZFLBwGYTpqRqm5jonVbOlLEhk_tyXKxV4CmY2uUjdEHVymdJpnDUFZSqKecwGFSnWO5J4qoqy8NWWN0K8Yn45PxoxR_bhF1Y9H0iNOiPV_4JHr8MeQi0e1-VlAZQC_qeeaKeexm-O3NgZInoQKvka2x2IF-9qw1GPMRXAIdVR0TRaG_UoUgQA82i48WmAJc4lRBv2J1c28qZ0l6E691DHVPgVFN07LZDd9SEHCt97V57Gm1DKul0"><img alt="IIT Delhi" class="h-16 md:h-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 opacity-80 brightness-125 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaFNDC2UDn1S8lYMRJP8qJ_wvVHV5C3NR2gvhYwhxsqIoc1qEC3h8jidRkkUmwZ0zP7O6T4YoXGHo3ovSIug3HKHthqS9YA4OdL_ClYQ6YDsZBra0ytXlJu-aN_GchmeCZVQHZE_uRkDIpyW1krilVvitWoTCdI9Uz3DiCxRxwjSJCu1ptUuS6pf0wX8B9wiV3J43q4cHPs_8JOpZR68MtJunRcDqcnp5f61SXNN0Ao4wTIA3O6uCfeCkE8eyBNnnTLUHDCbgTsoM"></div>
+</div>
+</section>
+<!-- Feature Grid Section -->
+<section class="py-section-padding">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="text-center mb-20">
+<h2 class="font-headline-lg text-headline-lg max-md:font-headline-lg-mobile max-md:text-headline-lg-mobile text-on-surface mb-4">Precision Engineering for Storage</h2>
+<p class="text-on-surface-variant text-body-md max-w-2xl mx-auto">
+                        Our suite of AI-driven tools provides the transparency and control you need to master your cloud ecosystem.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature Card 1 -->
+<div class="glass-card p-unit-gutter rounded-xl group hover:border-primary/50 transition-all duration-500">
+<div class="h-48 mb-8 bg-surface-container rounded-lg relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+<div class="relative w-24 h-24 border-2 border-primary/20 rounded-lg flex items-center justify-center">
+<div class="w-16 h-16 bg-primary/20 rounded animate-ping duration-1000"></div>
+<span class="material-symbols-outlined absolute text-primary text-4xl">dynamic_form</span>
+</div>
+</div>
+<h3 class="font-section-header text-section-header text-on-surface mb-3">AutoScaler</h3>
+<p class="text-on-surface-variant text-body-md mb-8">
+                            Intelligent, autonomous block storage right-sizing that scales in real-time with your demand.
+                        </p>
+<a class="inline-flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+                            Explore <span class="material-symbols-outlined">trending_flat</span>
+</a>
+</div>
+<!-- Feature Card 2 -->
+<div class="glass-card p-unit-gutter rounded-xl group hover:border-primary/50 transition-all duration-500">
+<div class="h-48 mb-8 bg-surface-container rounded-lg relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent"></div>
+<div class="relative w-full px-8">
+<div class="h-1 bg-white/10 rounded-full w-full"></div>
+<div class="h-1 bg-primary rounded-full w-2/3 absolute top-0 animate-[shimmer_2s_infinite]"></div>
+<div class="flex justify-between mt-4">
+<div class="w-4 h-4 bg-primary rounded-full shadow-[0_0_10px_#a3e635]"></div>
+<div class="w-4 h-4 bg-primary/20 rounded-full"></div>
+<div class="w-4 h-4 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+<span class="material-symbols-outlined absolute text-primary text-4xl top-1/2 -translate-y-1/2">psychology</span>
+</div>
+<h3 class="font-section-header text-section-header text-on-surface mb-3">Humen</h3>
+<p class="text-on-surface-variant text-body-md mb-8">
+                            The intelligence engine for cloud storage, providing predictive insights and automated policy enforcement.
+                        </p>
+<a class="inline-flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+                            Explore <span class="material-symbols-outlined">trending_flat</span>
+</a>
+</div>
+<!-- Feature Card 3 -->
+<div class="glass-card p-unit-gutter rounded-xl group hover:border-primary/50 transition-all duration-500">
+<div class="h-48 mb-8 bg-surface-container rounded-lg relative overflow-hidden flex items-center justify-center">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent"></div>
+<div class="grid grid-cols-3 gap-2 w-32">
+<div class="h-12 bg-primary/40 rounded-sm"></div>
+<div class="h-8 bg-primary/20 rounded-sm"></div>
+<div class="h-16 bg-primary/60 rounded-sm"></div>
+<div class="h-6 bg-primary/10 rounded-sm"></div>
+<div class="h-10 bg-primary/30 rounded-sm"></div>
+<div class="h-4 bg-primary/5 rounded-sm"></div>
+</div>
+<span class="material-symbols-outlined absolute text-primary text-4xl">search_check</span>
+</div>
+<h3 class="font-section-header text-section-header text-on-surface mb-3">Assessment</h3>
+<p class="text-on-surface-variant text-body-md mb-8">
+                            Find your cloud storage waste in 5 minutes with our deep-scan infrastructure audit tool.
+                        </p>
+<a class="inline-flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all" href="#">
+                            Explore <span class="material-symbols-outlined">trending_flat</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- TCO Calculator Section -->
+<section class="py-section-padding bg-surface-container-low overflow-hidden">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div>
+<div class="w-12 h-1 bg-primary mb-8"></div>
+<h2 class="font-headline-lg text-headline-lg max-md:font-headline-lg-mobile max-md:text-headline-lg-mobile text-on-surface mb-6">
+                            How much is your cloud storage actually costing you?
+                        </h2>
+<p class="text-on-surface-variant text-body-md mb-8">
+                            Most enterprises waste 30-50% of their storage budget on over-provisioned EBS volumes. Our TCO calculator reveals the hidden costs and the immediate ROI of switching to Lucidity.
+                        </p>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                                Analyze Multi-Cloud Spend
+                            </li>
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                                Identify Unused Snapshots
+                            </li>
+<li class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+                                Projected Annualized Savings
+                            </li>
+</ul>
+</div>
+<div class="relative">
+<div class="absolute -inset-1 bg-primary/20 blur-xl rounded-2xl"></div>
+<div class="relative bg-surface-container-highest p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
+<h3 class="font-section-header text-section-header text-on-surface mb-6">Run the numbers on your environment</h3>
+<form class="space-y-6">
+<div>
+<label class="block text-on-surface-variant text-body-sm mb-2 uppercase font-label-mono">Cloud Provider</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
+<option>Amazon Web Services (AWS)</option>
+<option>Microsoft Azure</option>
+<option>Google Cloud Platform</option>
+</select>
+</div>
+<div>
+<label class="block text-on-surface-variant text-body-sm mb-2 uppercase font-label-mono">Monthly Storage Spend ($)</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-on-surface focus:ring-1 focus:ring-primary focus:border-primary placeholder:opacity-30" placeholder="e.g. 50,000" type="number">
+</div>
+<div>
+<label class="block text-on-surface-variant text-body-sm mb-2 uppercase font-label-mono">Avg. Storage Utilization (%)</label>
+<input class="w-full accent-primary" type="range">
+<div class="flex justify-between text-on-surface-variant text-body-sm mt-1">
+<span class="">0%</span>
+<span class="">50%</span>
+<span class="">100%</span>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-full font-bold btn-glow transition-all flex items-center justify-center gap-2" type="submit">
+                                    Calculate My ROI
+                                    <span class="material-symbols-outlined">query_stats</span>
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-section-padding relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 -z-10"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter text-center">
+<div class="max-w-3xl mx-auto space-y-8">
+<h2 class="font-headline-lg text-headline-lg max-md:font-headline-lg-mobile max-md:text-headline-lg-mobile text-on-surface">Ready to achieve Lucidity?</h2>
+<p class="text-on-surface-variant text-body-md">
+                        Join 500+ enterprises optimizing their infrastructure with autonomous storage management. Setup takes less than 10 minutes.
+                    </p>
+<div class="flex justify-center gap-4">
+<button class="bg-primary text-on-primary px-10 py-5 rounded-full font-bold btn-glow transition-all hover:scale-105">Get Started for Free</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-white/5 py-12">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="space-y-4 text-center md:text-left">
+<img alt="Daddykart Logo" class="h-8 w-auto object-contain mx-auto md:mx-0 mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnX43a7uPuzOFinguyw3YxtZvKE8XJCq2NLRsi1fRhML_BRaP0YF9iY88dE2f-bZe3BOXMq0miYEYgQd1VXRvEEhuuv4p1uklYX6MoLPqBZ23CAo7uIyMLimpmtiarBius0AUQ4aSOjjokejBrKFLj8kEAb7421mHE8AlB_wySoYpl-YiQ84MWuMCjEF2D3T-9S6b96KFGAWqPlHpc15-88gyRLnR4n6wHYe-r2ZMAbVw0lk0uQOklMN7yfyBU8vDwJmVxfCj-K9U">
+<p class="text-on-surface-variant text-body-sm max-w-xs">The india's first autonomous storage orchestration platform for modern cloud teams.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Security</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm" href="#">Status</a>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-white/5 text-center">
+<p class="text-on-surface-variant font-body-sm text-body-sm">© 2026 DaddyKart AI. All rights reserved.</p>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for hero button
+        const heroBtn = document.querySelector('.btn-glow');
+        heroBtn.addEventListener('mousedown', () => {
+            heroBtn.classList.add('scale-95');
+        });
+        heroBtn.addEventListener('mouseup', () => {
+            heroBtn.classList.remove('scale-95');
+        });
+
+        // Sticky Nav logic
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 20) {
+                nav.classList.add('bg-background/90');
+                nav.classList.remove('bg-background/40');
+            } else {
+                nav.classList.add('bg-background/40');
+                nav.classList.remove('bg-background/90');
+            }
+        });
+    </script>
+
+
+
+
+
+
+</body></html>
