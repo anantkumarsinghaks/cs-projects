@@ -1,24 +1,31 @@
 'use client';
 
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Folder, File, Image as ImageIcon, Video, FileText, Trash2, Star, 
   Search, Grid, List, Moon, Sun, UploadCloud, Plus, ArrowUpDown, 
   Share2, Shield, Flame, Snowflake, Thermometer, Check, Copy, User,
-  ChevronDown, ExternalLink, Zap, AlertCircle
+  ChevronDown, ExternalLink, Zap, AlertCircle, LogOut, X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { 
   localDB, FileItem, UserProfile, FREE_LIMIT_BYTES, 
   calculateSHA256, compressMedia 
 } from '@/utils/db';
+import { logoutUser } from '@/app/actions/auth';
+import LandingPage from '@/app/components/LandingPage';
 
 export default function Home() {
+  const router = useRouter();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState(false);
   
   // Auth & profile state
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
   // Database files state
   const [files, setFiles] = useState<FileItem[]>([]);
@@ -40,6 +47,7 @@ export default function Home() {
   const [uploadStatusMsg, setUploadStatusMsg] = useState('');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [shareLink, setShareLink] = useState<string | null>(null);
+  const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
   
   // Load initial configurations
   useEffect(() => {
@@ -53,13 +61,45 @@ export default function Home() {
       document.documentElement.classList.remove('dark');
     }
 
-    // Set default user session
-    const user = localDB.getProfile('user-demo-123');
-    setCurrentUser(user);
-    
-    // Load files
-    const userFiles = localDB.getFiles('user-demo-123');
-    setFiles(userFiles);
+    // Fetch active user session
+    const initSession = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            const userData = data.user;
+            
+            // Load profile and dynamically sync current profile details
+            let profile = localDB.getProfile(userData.id);
+            if (
+              profile.name !== userData.name || 
+              profile.email !== userData.email || 
+              profile.avatar_url !== userData.avatar_url
+            ) {
+              profile = localDB.updateProfile(userData.id, {
+                name: userData.name,
+                email: userData.email,
+                avatar_url: userData.avatar_url
+              });
+            }
+            
+            setCurrentUser(profile);
+            setFiles(localDB.getFiles(userData.id));
+            setIsAuthenticated(true);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Session initialization failed:', error);
+      }
+
+      // Guest flow: Not authenticated, no session
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    };
+
+    initSession();
   }, []);
 
   const toggleTheme = () => {
@@ -79,7 +119,60 @@ export default function Home() {
     const updated = localDB.updateProfile(currentUser.id, { tier: 'Pro' });
     setCurrentUser(updated);
     setShowUpgradeModal(false);
+    alert('Successfully upgraded to DaddyKart Pro! Enjoy unlimited cloud storage.');
   };
+
+  const handleCancelSubscription = () => {
+    if (!currentUser) return;
+    const confirmCancel = window.confirm('Are you sure you want to cancel your DaddyKart Pro subscription? This will restore the 10GB storage limit and re-enable smart compression.');
+    if (confirmCancel) {
+      const updated = localDB.updateProfile(currentUser.id, { tier: 'Free' });
+      setCurrentUser(updated);
+      alert('Subscription cancelled. Your account has been reverted to the Free plan.');
+    }
+  };
+
+  const handleNextFile = () => {
+    if (!previewFile || !currentUser) return;
+    const visibleFiles = getFilteredAndSortedFiles();
+    const currentIdx = visibleFiles.findIndex(f => f.id === previewFile.id);
+    if (currentIdx !== -1 && currentIdx < visibleFiles.length - 1) {
+      const nextFile = visibleFiles[currentIdx + 1];
+      const updated = files.map(f => f.id === nextFile.id ? { ...f, access_count: f.access_count + 1, last_accessed: new Date().toISOString() } : f);
+      setFiles(updated);
+      localDB.saveFiles(currentUser.id, updated);
+      setPreviewFile({ ...nextFile, access_count: nextFile.access_count + 1, last_accessed: new Date().toISOString() });
+    }
+  };
+
+  const handlePrevFile = () => {
+    if (!previewFile || !currentUser) return;
+    const visibleFiles = getFilteredAndSortedFiles();
+    const currentIdx = visibleFiles.findIndex(f => f.id === previewFile.id);
+    if (currentIdx > 0) {
+      const prevFile = visibleFiles[currentIdx - 1];
+      const updated = files.map(f => f.id === prevFile.id ? { ...f, access_count: f.access_count + 1, last_accessed: new Date().toISOString() } : f);
+      setFiles(updated);
+      localDB.saveFiles(currentUser.id, updated);
+      setPreviewFile({ ...prevFile, access_count: prevFile.access_count + 1, last_accessed: new Date().toISOString() });
+    }
+  };
+
+  // Keyboard navigation for lightbox preview
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!previewFile) return;
+      if (e.key === 'ArrowRight') {
+        handleNextFile();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevFile();
+      } else if (e.key === 'Escape') {
+        setPreviewFile(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [previewFile, files]);
 
   // Mock logout/login switch to simulate different users or reset state
   const handleResetData = () => {
@@ -91,6 +184,13 @@ export default function Home() {
     setCurrentUser(defaultUser);
     setFiles(defaultFiles);
     setSelectedFileIds([]);
+    alert('Database has been successfully reset to defaults!');
+  };
+
+  const handleSignOut = async () => {
+    await logoutUser();
+    router.push('/login');
+    router.refresh();
   };
 
   // Upload handler with resumable progress, compression and deduplication
@@ -330,11 +430,27 @@ export default function Home() {
     }
   };
 
+  const storageLimit = currentUser?.tier === 'Pro' ? 100 * 1024 * 1024 * 1024 : FREE_LIMIT_BYTES;
   const storageUsedPercent = currentUser 
-    ? Math.min((currentUser.storage_used / FREE_LIMIT_BYTES) * 100, 100) 
+    ? Math.min((currentUser.storage_used / storageLimit) * 100, 100) 
     : 0;
 
   const currentVisibleFiles = getFilteredAndSortedFiles();
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="bg-[#0b1326] min-h-screen flex items-center justify-center text-white">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-[#a3e635] mx-auto" />
+          <p className="text-xs text-neutral-400 font-mono tracking-widest uppercase">Initializing Daddykart...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LandingPage onSignInClick={() => router.push('/login')} />;
+  }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden font-sans">
@@ -343,8 +459,8 @@ export default function Home() {
         <div>
           {/* Logo */}
           <div className="h-20 flex items-center px-6 gap-3 border-b border-neutral-800">
-            <div className="bg-lime-accent text-black p-2 rounded-xl flex items-center justify-center font-black text-xl shadow-lg shadow-lime-500/20">
-              ⚡
+            <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-[#a3e635] shadow-lg shadow-lime-500/20 shrink-0">
+              <img src="/daddykart-new-logo.jpg" alt="Daddykart" className="w-full h-full object-cover object-top scale-110" />
             </div>
             <div>
               <span className="font-extrabold text-xl tracking-tight text-white">daddy<span className="text-lime-accent">kart</span></span>
@@ -408,45 +524,44 @@ export default function Home() {
         </div>
 
         {/* Storage status & upgrade */}
-        <div className="p-6 border-t border-neutral-800 bg-neutral-900/40">
-          <div className="flex justify-between text-xs text-neutral-400 mb-2 font-medium">
-            <span>Storage Used</span>
-            <span>
-              {currentUser?.tier === 'Pro' 
-                ? `${formatSize(currentUser.storage_used)}`
-                : `${formatSize(currentUser?.storage_used || 0)} of 10 GB`
-              }
-            </span>
+        <div className="p-6 border-t border-neutral-800 bg-neutral-900/40 space-y-4">
+          <div>
+            <div className="flex justify-between text-xs text-neutral-400 mb-2 font-medium">
+              <span>Storage Used</span>
+              <span>
+                {currentUser?.tier === 'Pro' 
+                  ? `${formatSize(currentUser.storage_used)} of 100 GB`
+                  : `${formatSize(currentUser?.storage_used || 0)} of 10 GB`
+                }
+              </span>
+            </div>
+
+            {/* Storage Progress Bar */}
+            <div className="w-full bg-neutral-800 h-2 rounded-full overflow-hidden">
+              <div 
+                className="bg-lime-accent h-full transition-all duration-500 rounded-full" 
+                style={{ width: `${storageUsedPercent}%` }}
+              />
+            </div>
           </div>
 
           {currentUser?.tier === 'Free' ? (
-            <>
-              {/* Storage Left Progress Bar */}
-              <div className="w-full bg-neutral-800 h-2.5 rounded-full overflow-hidden mb-5">
-                <div 
-                  className="bg-lime-accent h-full transition-all duration-500 rounded-full" 
-                  style={{ width: `${storageUsedPercent}%` }}
-                />
+            <div className="bg-gradient-to-br from-lime-400/10 to-emerald-400/5 border border-lime-400/20 p-4 rounded-2xl relative overflow-hidden">
+              <div className="relative z-10">
+                <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                  <Zap size={14} className="text-lime-accent animate-pulse" /> Upgrade to Pro
+                </h4>
+                <p className="text-[11px] text-neutral-400 mt-1 mb-3">
+                  Unlock unlimited storage space, lossless media, & zero compression.
+                </p>
+                <button 
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="w-full bg-lime-accent hover:bg-lime-400 text-black font-bold text-xs py-2 px-3 rounded-xl transition-all duration-200 shadow-md shadow-lime-500/10 active:scale-95"
+                >
+                  Go Pro Now
+                </button>
               </div>
-
-              {/* Upgrade Banner */}
-              <div className="bg-gradient-to-br from-lime-400/10 to-emerald-400/5 border border-lime-400/20 p-4 rounded-2xl relative overflow-hidden">
-                <div className="relative z-10">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
-                    <Zap size={14} className="text-lime-accent animate-pulse" /> Upgrade to Pro
-                  </h4>
-                  <p className="text-[11px] text-neutral-400 mt-1 mb-3">
-                    Unlock unlimited storage space, lossless media, & zero compression.
-                  </p>
-                  <button 
-                    onClick={() => setShowUpgradeModal(true)}
-                    className="w-full bg-lime-accent hover:bg-lime-400 text-black font-bold text-xs py-2 px-3 rounded-xl transition-all duration-200 shadow-md shadow-lime-500/10 active:scale-95"
-                  >
-                    Go Pro Now
-                  </button>
-                </div>
-              </div>
-            </>
+            </div>
           ) : (
             <div className="bg-charcoal-light border border-neutral-800 p-4 rounded-2xl flex items-center justify-between">
               <div>
@@ -456,14 +571,23 @@ export default function Home() {
                 </p>
               </div>
               <button 
-                onClick={handleResetData}
-                title="Reset Database to default"
-                className="text-[11px] text-neutral-400 hover:text-rose-400 border border-neutral-800 hover:border-rose-400/20 px-2.5 py-1.5 rounded-lg bg-neutral-900 transition-colors"
+                onClick={handleCancelSubscription}
+                title="Cancel your Pro subscription"
+                className="text-[10px] text-neutral-400 hover:text-rose-500 border border-neutral-800 hover:border-rose-500/20 px-2.5 py-1 rounded-lg bg-neutral-900 transition-colors font-bold"
               >
-                Reset DB
+                Cancel Pro
               </button>
             </div>
           )}
+
+          {/* Reset Database Button */}
+          <button 
+            onClick={handleResetData}
+            title="Reset Database to default"
+            className="w-full text-center text-xs font-bold py-2.5 rounded-xl border border-neutral-800 hover:border-neutral-700 bg-neutral-900/50 hover:bg-neutral-900 text-neutral-400 hover:text-rose-400 transition-colors"
+          >
+            Reset Database
+          </button>
         </div>
       </aside>
 
@@ -512,25 +636,54 @@ export default function Home() {
               {isDarkMode ? <Sun size={18} className="text-lime-accent" /> : <Moon size={18} className="text-neutral-600" />}
             </button>
 
-            {/* User Profile / Auth State */}
-            <div className="flex items-center gap-3 pl-3 border-l border-neutral-200 dark:border-neutral-800">
-              <div className="text-right hidden md:block">
-                <h5 className="text-sm font-bold">{currentUser?.name || 'Guest User'}</h5>
-                <span className={`text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded-md ${
-                  currentUser?.tier === 'Pro' 
-                    ? 'bg-lime-accent/20 text-lime-accent border border-lime-accent/30' 
-                    : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500'
-                }`}>
-                  {currentUser?.tier || 'Free'} Tier
-                </span>
-              </div>
-              <div className="relative group">
+            {/* User Profile / Auth State Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center gap-3 pl-3 border-l border-neutral-200 dark:border-neutral-800 focus:outline-none cursor-pointer"
+              >
+                <div className="text-right hidden md:block">
+                  <h5 className="text-sm font-bold">{currentUser?.name || 'Guest User'}</h5>
+                  <span className={`text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded-md ${
+                    currentUser?.tier === 'Pro' 
+                      ? 'bg-lime-accent/20 text-lime-accent border border-lime-accent/30' 
+                      : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500'
+                  }`}>
+                    {currentUser?.tier || 'Free'} Tier
+                  </span>
+                </div>
                 <img 
                   src={currentUser?.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&q=80'} 
                   alt="avatar" 
-                  className="w-10 h-10 rounded-full object-cover border-2 border-neutral-200 dark:border-neutral-800 group-hover:border-lime-accent transition-colors"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-neutral-200 dark:border-neutral-800 hover:border-lime-accent transition-colors"
                 />
-              </div>
+              </button>
+
+              <AnimatePresence>
+                {showProfileMenu && (
+                  <>
+                    {/* Click outside backdrop */}
+                    <div className="fixed inset-0 z-20" onClick={() => setShowProfileMenu(false)} />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#1A1A1A] border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl py-2 z-30"
+                    >
+                      <div className="px-4 py-2 border-b border-neutral-100 dark:border-neutral-800 text-left">
+                        <p className="text-[9px] text-neutral-400 dark:text-neutral-500 uppercase tracking-widest font-black">Logged in as</p>
+                        <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">{currentUser?.email}</p>
+                      </div>
+                      <button 
+                        onClick={handleSignOut}
+                        className="w-full text-left px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-xs font-bold text-rose-500 hover:text-rose-400 transition-colors flex items-center gap-2"
+                      >
+                        <LogOut size={14} /> Sign Out
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </header>
@@ -671,7 +824,13 @@ export default function Home() {
                 return (
                   <div
                     key={file.id}
-                    onClick={(e) => handleToggleSelectFile(file.id, e)}
+                    onClick={() => {
+                      if (!currentUser) return;
+                      const updated = files.map(f => f.id === file.id ? { ...f, access_count: f.access_count + 1, last_accessed: new Date().toISOString() } : f);
+                      setFiles(updated);
+                      localDB.saveFiles(currentUser.id, updated);
+                      setPreviewFile({ ...file, access_count: file.access_count + 1, last_accessed: new Date().toISOString() });
+                    }}
                     className={`group relative bg-white dark:bg-charcoal border rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-lime-500/5 select-none ${
                       isSelected 
                         ? 'border-lime-accent shadow-md shadow-lime-500/10' 
@@ -680,6 +839,21 @@ export default function Home() {
                   >
                     {/* Media Preview Box */}
                     <div className="h-44 bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center relative overflow-hidden border-b border-neutral-100 dark:border-neutral-800/60">
+                      {/* Selection checkbox */}
+                      <div 
+                        className={`absolute top-3 left-3 z-10 p-1 bg-black/60 backdrop-blur-md rounded-lg transition-opacity duration-200 border border-white/10 ${
+                          isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        }`}
+                        onClick={(e) => { e.stopPropagation(); handleToggleSelectFile(file.id, e as any); }}
+                      >
+                        <input 
+                          type="checkbox" 
+                          checked={isSelected}
+                          onChange={() => {}} // handled by onClick
+                          className="w-3.5 h-3.5 rounded border-neutral-600 text-lime-accent focus:ring-lime-accent cursor-pointer"
+                        />
+                      </div>
+
                       {file.thumbnail ? (
                         <img 
                           src={file.thumbnail} 
@@ -693,7 +867,7 @@ export default function Home() {
                       )}
 
                       {/* Storage tier tag overlay */}
-                      <div className="absolute top-3 left-3">
+                      <div className="absolute bottom-3 left-3">
                         {getTierIcon(file.storage_tier)}
                       </div>
 
@@ -788,7 +962,13 @@ export default function Home() {
                     return (
                       <tr 
                         key={file.id}
-                        onClick={(e) => handleToggleSelectFile(file.id, e)}
+                        onClick={() => {
+                          if (!currentUser) return;
+                          const updated = files.map(f => f.id === file.id ? { ...f, access_count: f.access_count + 1, last_accessed: new Date().toISOString() } : f);
+                          setFiles(updated);
+                          localDB.saveFiles(currentUser.id, updated);
+                          setPreviewFile({ ...file, access_count: file.access_count + 1, last_accessed: new Date().toISOString() });
+                        }}
                         className={`hover:bg-neutral-50 dark:hover:bg-neutral-900/30 cursor-pointer transition-colors ${
                           isSelected ? 'bg-lime-accent/5 dark:bg-lime-accent/5' : ''
                         }`}
@@ -996,6 +1176,162 @@ export default function Home() {
                 </button>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* FILE PREVIEW MODAL */}
+      <AnimatePresence>
+        {previewFile && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-neutral-950/95 backdrop-blur-md z-50 flex flex-col justify-between select-none"
+            onClick={() => setPreviewFile(null)}
+          >
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md flex items-center justify-between shrink-0 z-10">
+              <div className="flex items-center gap-3">
+                <div className="text-lime-accent">
+                  {getFileIcon(previewFile.type)}
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-neutral-100 max-w-[200px] sm:max-w-[400px] truncate" title={previewFile.name}>
+                    {previewFile.name}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] text-neutral-400 font-mono font-semibold">{formatSize(previewFile.size)}</span>
+                    <span className="w-1 h-1 rounded-full bg-neutral-600" />
+                    <span className="text-[10px] text-neutral-400 font-mono font-semibold">Tier: {previewFile.storage_tier}</span>
+                    {previewFile && (
+                      <>
+                        <span className="w-1 h-1 rounded-full bg-neutral-600" />
+                        <span className="text-[10px] text-lime-accent font-mono font-semibold">
+                          File {currentVisibleFiles.findIndex(f => f.id === previewFile.id) + 1} of {currentVisibleFiles.length}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setPreviewFile(null)}
+                className="p-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-full transition-colors text-neutral-400 hover:text-white"
+                title="Close Preview"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Main Content Area with Navigation Arrows */}
+            <div className="flex-1 w-full flex items-center justify-center relative px-4 md:px-20 py-4 bg-neutral-950/20" onClick={(e) => e.stopPropagation()}>
+              {/* Left Arrow Button */}
+              {currentVisibleFiles.findIndex(f => f.id === previewFile.id) > 0 && (
+                <button 
+                  onClick={handlePrevFile}
+                  className="absolute left-4 md:left-8 p-3.5 bg-neutral-900/60 hover:bg-neutral-800/80 border border-neutral-800/40 rounded-full text-white backdrop-blur hover:scale-105 active:scale-95 transition-all z-10 cursor-pointer"
+                  title="Previous File"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+              )}
+
+              {/* File Preview Display */}
+              <div className="w-full h-full max-h-[70vh] flex items-center justify-center">
+                {previewFile.thumbnail ? (
+                  <img 
+                    src={previewFile.thumbnail} 
+                    alt={previewFile.name} 
+                    className="max-h-[70vh] max-w-full object-contain rounded-2xl shadow-2xl border border-neutral-900/40 select-none animate-[fadeIn_0.15s_ease-out]"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center space-y-4">
+                    <div className="bg-neutral-900 border border-neutral-800/80 p-8 rounded-[2rem] text-neutral-400 shadow-xl relative overflow-hidden">
+                      <div className="absolute -top-12 -left-12 w-24 h-24 bg-lime-500/5 rounded-full blur-xl pointer-events-none" />
+                      <div className="scale-[1.8] inline-block">{getFileIcon(previewFile.type)}</div>
+                    </div>
+                    <span className="text-xs text-neutral-400 uppercase tracking-widest font-mono pt-2">No Preview Available</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Arrow Button */}
+              {currentVisibleFiles.findIndex(f => f.id === previewFile.id) !== -1 && 
+               currentVisibleFiles.findIndex(f => f.id === previewFile.id) < currentVisibleFiles.length - 1 && (
+                <button 
+                  onClick={handleNextFile}
+                  className="absolute right-4 md:right-8 p-3.5 bg-neutral-900/60 hover:bg-neutral-800/80 border border-neutral-800/40 rounded-full text-white backdrop-blur hover:scale-105 active:scale-95 transition-all z-10 cursor-pointer"
+                  title="Next File"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              )}
+            </div>
+
+            {/* Footer controls and stats */}
+            <div className="px-6 py-4 bg-neutral-950 border-t border-neutral-900 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 z-10" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-6 text-xs text-neutral-400 font-semibold max-md:justify-between">
+                <div>
+                  <span className="text-[10px] text-neutral-500 uppercase font-mono tracking-wider">Uploaded</span>
+                  <p className="text-neutral-200 mt-0.5">{new Date(previewFile.created_at).toLocaleDateString()}</p>
+                </div>
+                <div className="w-[1px] h-6 bg-neutral-800 hidden md:block" />
+                <div>
+                  <span className="text-[10px] text-neutral-500 uppercase font-mono tracking-wider">Access Stats</span>
+                  <p className="text-neutral-200 mt-0.5">{previewFile.access_count} access hits</p>
+                </div>
+                <div className="w-[1px] h-6 bg-neutral-800 hidden md:block" />
+                <div className="truncate max-w-[200px]">
+                  <span className="text-[10px] text-neutral-500 uppercase font-mono tracking-wider">Storage Path</span>
+                  <p className="text-neutral-200 mt-0.5 truncate font-mono text-[10px]">{previewFile.storage_path}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between md:justify-end gap-2.5">
+                <div className="flex items-center gap-2">
+                  {/* Share Button */}
+                  <button 
+                    onClick={() => handleShareFile(previewFile)}
+                    className="flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white font-extrabold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-xs"
+                    title="Share File Link"
+                  >
+                    <Share2 size={14} />
+                    <span>Share</span>
+                  </button>
+
+                  {/* Favorite Button */}
+                  <button 
+                    onClick={() => {
+                      handleToggleFavorite(previewFile.id);
+                      setPreviewFile(prev => prev ? { ...prev, is_favorite: !prev.is_favorite } : null);
+                    }}
+                    className={`flex items-center gap-2 border font-extrabold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-xs ${
+                      previewFile.is_favorite 
+                        ? 'bg-lime-accent/15 border-lime-accent text-lime-accent' 
+                        : 'border-neutral-800 hover:bg-neutral-800 text-neutral-300'
+                    }`}
+                  >
+                    <Star size={14} className={previewFile.is_favorite ? 'fill-lime-accent text-lime-accent' : ''} />
+                    <span>{previewFile.is_favorite ? 'Favorited' : 'Favorite'}</span>
+                  </button>
+                </div>
+
+                {/* Trash Button */}
+                <button 
+                  onClick={() => {
+                    handleTrashFile(previewFile.id);
+                    setPreviewFile(null);
+                  }}
+                  className="flex items-center gap-2 bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/20 text-rose-500 font-extrabold px-4 py-2.5 rounded-xl transition-all active:scale-95 text-xs"
+                  title="Move to Trash"
+                >
+                  <Trash2 size={14} />
+                  <span>Trash</span>
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
