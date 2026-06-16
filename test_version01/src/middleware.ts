@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 /**
  * Route protection proxy for Next.js.
  * Manages access control between landing page, login page, and dashboard.
