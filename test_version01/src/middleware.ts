@@ -5,7 +5,7 @@ export const runtime = 'edge';
  * Route protection proxy for Next.js.
  * Manages access control between landing page, login page, and dashboard.
  */
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const session = request.cookies.get('session')?.value;
   const path = request.nextUrl.pathname;
 
