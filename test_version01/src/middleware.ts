@@ -1,37 +1,76 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-export const runtime = 'experimental-edge';
-/**
- * Route protection proxy for Next.js.
- * Manages access control between landing page, login page, and dashboard.
- */
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
+
+// Cloudflare Pages requires the edge runtime
+export const runtime = 'edge';
+
 export async function middleware(request: NextRequest) {
-  const session = request.cookies.get('session')?.value;
+  // Create an unmodified response by default
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  // Initialize the Supabase Edge-compatible client
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  // This safely and accurately checks the secure Supabase cookies
+  const { data: { user } } = await supabase.auth.getUser();
+
   const path = request.nextUrl.pathname;
 
-  const isLoginPage = path === '/login';
-  const isApiRoute = path.startsWith('/api');
-  const isStatic = path.includes('.') || path.startsWith('/_next');
-
-  // Let API endpoints and static resources pass through automatically
-  if (isStatic || isApiRoute) {
-    return NextResponse.next();
+  // 1. Let static files, API routes, and Auth Callback routes pass through untouched
+  if (
+    path.startsWith('/_next') ||
+    path.startsWith('/api') ||
+    path.startsWith('/auth') ||
+    path.includes('.')
+  ) {
+    return response;
   }
 
-  // If there is an active session and the user is visiting the login page,
-  // redirect them to the home route (dashboard).
-  if (session && isLoginPage) {
-    return NextResponse.redirect(new URL('/', request.url));
+  // 2. If the user IS logged in and tries to visit the login page, push them to the dashboard
+  if (user && path === '/login') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // Note: Guest users are allowed to access `/` (home route), which will
-  // dynamically render the landing page instead of the files dashboard.
-  return NextResponse.next();
+  // 3. If the user is NOT logged in and tries to access the dashboard, kick them back to login
+  if (!user && path.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Note: Guest users can still access '/' (the home page) safely.
+  return response;
 }
 
 export const config = {
   matcher: [
-    // Apply proxy to all pages, excluding static files
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
