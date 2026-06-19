@@ -11,9 +11,14 @@ export async function GET(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
   if (code && supabaseUrl && supabaseAnonKey) {
+    console.log("Supabase URL:", supabaseUrl);
+    console.log("Anon key exists:", !!supabaseAnonKey);
+    console.log("Authorization code:", code);
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
+    console.log("Exchange error:", error);
+    console.log("Session:", data.session);
     if (!error && data.session) {
       const user = data.session.user;
       const sessionData = {
